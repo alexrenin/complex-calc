@@ -88,6 +88,8 @@ function App() {
 
   }, [])
 
+  const monthPassIncome = Math.round(result * 0.04 / 12);
+
   function handleDoCalc() {
     const yearPercent = parseInt(inputYearPercent.current.value);
     const yearNumber = parseInt(inputYearNumber.current.value);
@@ -162,6 +164,13 @@ function App() {
             <ListItem>
               <Typography>
                 {`Сумма к получению: ${pretyBigNumb(result)}`}
+              </Typography>
+            </ListItem>
+          </List>
+          <List>
+            <ListItem>
+              <Typography>
+                {`4 % фонда / 12: ${pretyBigNumb(monthPassIncome)}`}
               </Typography>
             </ListItem>
           </List>

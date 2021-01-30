@@ -9,6 +9,36 @@ import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 
+/* constants */
+
+const LS_KEY = 'complex-calc-storage';
+
+const initValue = {
+  yearPercent: 10,
+  yearNumber: 1,
+  monthIncome: 0,
+  startCount: 100000,
+};
+
+const defaultParam = (() => {
+  const storageJSON = localStorage.getItem(LS_KEY) || '{}';
+  const storage = JSON.parse(storageJSON);
+
+  const {
+    yearPercent = initValue.yearPercent,
+    yearNumber = initValue.yearNumber,
+    monthIncome = initValue.monthIncome,
+    startCount = initValue.startCount,
+  } = storage || {};
+
+  return {
+    yearPercent,
+    yearNumber,
+    monthIncome,
+    startCount,
+  };
+})()
+
 /* help functions */
 
 function pretyBigNumb(num) {
@@ -16,18 +46,11 @@ function pretyBigNumb(num) {
   return numbStr;
 }
 
-const initValue = {
-  yearPercent: 10,
-  yearNumber: 1,
-  monthIncome: 0,
-  startCount: 100000,
-}
-
 function getCalcRes({
-  yearPercent = initValue.yearPercent,
-  yearNumber = initValue.yearNumber,
-  monthIncome = initValue.monthIncome,
-  startCount = initValue.startCount,
+  yearPercent = defaultParam.yearPercent,
+  yearNumber = defaultParam.yearNumber,
+  monthIncome = defaultParam.monthIncome,
+  startCount = defaultParam.startCount,
 } = {}) {
   const periodNumPerYear = 12;
   const monthPercent = 1 + (yearPercent / 100) / periodNumPerYear;
@@ -96,12 +119,16 @@ function App() {
     const monthIncome = parseInt(inputMonthIncome.current.value);
     const startCount = parseInt(inputStartCount.current.value);
 
-    const res = getCalcRes({
+    const param = {
       yearPercent,
       yearNumber,
       monthIncome,
       startCount,
-    })
+    };
+    const res = getCalcRes(param);
+
+    const paramJSON = JSON.stringify(param);
+    localStorage.setItem(LS_KEY, paramJSON);
 
     setResult(res);
   }
@@ -120,7 +147,7 @@ function App() {
                 inputRef={inputStartCount}
                 label="Первоначальная сумма"
                 type="number"
-                defaultValue={initValue.startCount}
+                defaultValue={defaultParam.startCount}
               />
             </ListItem>
             <ListItem>
@@ -129,7 +156,7 @@ function App() {
                 inputRef={inputYearPercent}
                 label="Ставка, % годовых"
                 type="number"
-                defaultValue={initValue.yearPercent}
+                defaultValue={defaultParam.yearPercent}
               />
             </ListItem>
             <ListItem>
@@ -138,7 +165,7 @@ function App() {
                 inputRef={inputYearNumber}
                 label="Количество лет"
                 type="number"
-                defaultValue={initValue.yearNumber}
+                defaultValue={defaultParam.yearNumber}
               />
             </ListItem>
             <ListItem>
@@ -147,7 +174,7 @@ function App() {
                 inputRef={inputMonthIncome}
                 label="Ежемесячное пополнение"
                 type="number"
-                defaultValue={initValue.monthIncome}
+                defaultValue={defaultParam.monthIncome}
               />
             </ListItem>
           </List>
